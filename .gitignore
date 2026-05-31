@@ -1,0 +1,22 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# Build outputs
+build/
+dist/
+releases/
+*.spec
+
+# Runtime logs
+*.log
+*.tmp
+
+# IDE/OS noise
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
