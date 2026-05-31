@@ -1,57 +1,77 @@
 # SCAN
 
-SCAN is a Windows diagnostics utility focused on reset-readiness and repair blockers.
-It runs a structured set of system checks and outputs clear findings with remediation hints.
+`SCAN` is a Windows diagnostics tool for reset-readiness and repair blockers.  
+It runs targeted system checks and gives actionable findings with remediation hints.
 
-## What it checks
+## Core Checks
 
-- disk space, disk health, and disk-related event errors
-- SFC, DISM, CHKDSK, and WinSxS pending state
+- disk space, disk/event health, and NTFS-related risk signals
+- SFC / DISM / CHKDSK / WinSxS pending state
 - WinRE and reset-policy readiness
-- reboot-required flags and servicing state
+- reboot-required and servicing-state flags
 - suspicious autoruns, services, tasks, and startup entries
 - BCD, TrustedInstaller, BitLocker, Secure Boot, TPM, and update health
 
-## Output
-
-SCAN writes logs to `%TEMP%\reset_diag`:
-
-- `full_log.txt`: verbose command output
-- `problems.txt`: findings only
-- `console_output.log`: full terminal transcript
-
 ## Requirements
 
-- Windows 10/11
+- Windows 10 or Windows 11
 - Python 3.10+
 - Administrator privileges
-- dependencies from `requirements.txt`
 
-## Run
+## Run From Source
+
+Recommended launcher (auto-elevates + installs Python dependencies):
 
 ```bat
 RUN.bat
 ```
 
-Fast mode:
+Direct usage:
+
+```powershell
+python -m pip install -r requirements.txt
+python main.py
+```
+
+Flags:
 
 ```powershell
 python main.py --fast
+python main.py --no-pause
+python main.py --fast --no-pause
 ```
 
-## Build
+## Output Files
 
-```bat
-BUILD.bat
+SCAN writes logs to `%TEMP%\reset_diag`:
+
+- `full_log.txt` - verbose command output
+- `problems.txt` - findings only
+- `console_output.log` - terminal transcript
+
+Exit code behavior:
+
+- `0` = no blockers detected
+- `1` = one or more findings detected
+
+## Build EXE (PyInstaller)
+
+Use an isolated environment for reproducible builds:
+
+```powershell
+python -m venv .buildvenv
+.\.buildvenv\Scripts\python -m pip install --upgrade pip
+.\.buildvenv\Scripts\python -m pip install -r requirements.txt pyinstaller
+.\.buildvenv\Scripts\python -m PyInstaller --noconfirm --clean --onefile --name SCAN main.py
 ```
 
-This produces:
+Build output:
 
 - `dist\SCAN.exe`
-- `releases\scan-<timestamp>\`
-- `releases\scan-<timestamp>.zip`
 
-## Notes
+Release staging (manual upload to GitHub Releases):
 
-- Running elevated is required for complete check coverage.
-- Exit code is `1` when findings are present, `0` when no blockers are detected.
+```powershell
+New-Item -ItemType Directory -Path .\releases -Force | Out-Null
+Copy-Item .\dist\SCAN.exe .\releases\SCAN.exe -Force
+```
