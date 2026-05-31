@@ -69,9 +69,4 @@ Build output:
 
 - `dist\SCAN.exe`
 
-Release staging (manual upload to GitHub Releases):
 
-```powershell
-New-Item -ItemType Directory -Path .\releases -Force | Out-Null
-Copy-Item .\dist\SCAN.exe .\releases\SCAN.exe -Force
-```
