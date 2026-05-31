@@ -62,11 +62,18 @@ Use an isolated environment for reproducible builds:
 python -m venv .buildvenv
 .\.buildvenv\Scripts\python -m pip install --upgrade pip
 .\.buildvenv\Scripts\python -m pip install -r requirements.txt pyinstaller
-.\.buildvenv\Scripts\python -m PyInstaller --noconfirm --clean --onefile --name SCAN main.py
+.\.buildvenv\Scripts\python -m PyInstaller --noconfirm --clean --onefile --name SCAN --icon icon.ico main.py
 ```
 
 Build output:
 
 - `dist\SCAN.exe`
+ 
+Release staging (manual upload to GitHub Releases):
 
+```powershell
+New-Item -ItemType Directory -Path .\releases -Force | Out-Null
+Copy-Item .\dist\SCAN.exe .\releases\SCAN.exe -Force
+```
 
+`icon.ico` in the repository root is used as the embedded executable icon.
